@@ -27,7 +27,7 @@ const getPlugins = function (env, apiUrl) {
     new BrowserSyncPlugin({
       host: 'localhost',
       port: 4000,
-      open: 'local'
+      reload: true
     })
   ];
 
@@ -54,7 +54,7 @@ const getLoaders = function (env) {
   const loaders = [{ test: /\.js$/, include: path.join(__dirname, 'src'), loaders: ['babel-loader?presets[]=react', 'eslint-loader'] }];
   loaders.push({ test: /\.json$/, loaders: ['json-loader'] });
   loaders.push({
-    test: /\.(eot|woff|woff2|ttf|svg|jpg|png)$/,
+    test: /\.(eot|woff|woff2|ttf|svg|jpg|png|ico)$/,
     loader: 'file-loader?name=[path][name].[hash].[ext]'
   });
   loaders.push({

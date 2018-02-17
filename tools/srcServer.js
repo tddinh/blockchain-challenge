@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import webpack from 'webpack';
+import favicon from 'serve-favicon';
 import webpackConfigBuilder from '../webpack.config.js';
 import webpackMiddleware from 'webpack-dev-middleware';
 import logger from 'morgan';
@@ -17,13 +18,15 @@ const assetFolder = config.output.publicPath;
 if(app.get('env') === 'development') {
   routes.use(require('webpack-dev-middleware')(compiler, {
     noInfo: true,
-    publicPath: config.output.publicPath
+    publicPath: config.output.publicPath,
+    stats: { colors: true }
   }));
   routes.use(require('webpack-hot-middleware')(compiler));
 }
 
 // serve static files
 routes.use(express.static(assetFolder));
+routes.use(favicon(path.join(__dirname, '../src/assets/images/favicon.ico')));
 
 // make sure this is always last
 routes.get('*', function(req, res) {

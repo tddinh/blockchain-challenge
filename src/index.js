@@ -1,14 +1,12 @@
 import 'babel-polyfill';
-import React, { Component } from 'react';
-import { render } from 'react-dom';
+import React from "react";
+import {render} from "react-dom";
+import Root from './containers/Root';
+import configureStore from "./store/configureStore";
 
-class App extends Component {
-  render(){
-    return (<div>Start here</div>);
-  }
-}
+const store = configureStore();
 
 render(
-  <App />,
+  <Root store={store} />,
   document.getElementById('root')
 );
