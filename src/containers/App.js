@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 class App extends Component {
+
   render() {
     const { children } = this.props;
 
@@ -14,4 +15,22 @@ class App extends Component {
   }
 }
 
-export default App;
+App.propTypes = {
+  children: PropTypes.object.isRequired
+};
+
+const mapStateToProps = (state) => {
+  return {
+    state: state
+  };
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);
