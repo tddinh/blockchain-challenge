@@ -1,50 +1,30 @@
-import express from 'express';
-import path from 'path';
+import browserSync from 'browser-sync';
 import webpack from 'webpack';
-import favicon from 'serve-favicon';
-import webpackConfigBuilder from '../webpack.config.js';
-import webpackMiddleware from 'webpack-dev-middleware';
-import logger from 'morgan';
-import open from 'open';
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import webpackHotMiddleware from 'webpack-hot-middleware';
+import historyApiFallback from 'connect-history-api-fallback';
+import webpackConfig from '../webpack.config';
 
-const app = express();
-const routes = express.Router();
-const port = process.env.PORT || 4000;
-const config = webpackConfigBuilder('development');
-const compiler = webpack(config);
-const assetFolder = config.output.publicPath;
+const config = webpackConfig('development');
+const bundler = webpack(config);
 
-// Only load this middleware in dev mode
-if(app.get('env') === 'development') {
-  routes.use(require('webpack-dev-middleware')(compiler, {
-    noInfo: true,
-    publicPath: config.output.publicPath,
-    stats: { colors: true }
-  }));
-  routes.use(require('webpack-hot-middleware')(compiler));
-}
+browserSync({
+  port: process.env.PORT || 8000,
+  server: {
+    baseDir: 'src',
 
-// serve static files
-routes.use(express.static(assetFolder));
-routes.use(favicon(path.join(__dirname, '../src/assets/images/favicon.ico')));
+    middleware: [
+      webpackDevMiddleware(bundler, {
+        publicPath: config.output.publicPath,
+        stats: { colors: true },
+        noInfo: true
+      }),
+      webpackHotMiddleware(bundler),
+      historyApiFallback()
+    ]
+  },
 
-// make sure this is always last
-routes.get('*', function(req, res) {
-  res.sendFile(path.join(__dirname, '../src/index.html'));
+  files: [
+    'src/*.html'
+  ]
 });
-
-// Parse incoming request bodies as JSON
-app.use(require('body-parser').json());
-
-// Mount our main router
-app.use('/', routes);
-
-app.listen(port, function(err) {
-  if(err){
-    console.log(err);
-  } else {
-    open(`http://localhost:${port}`);
-    console.log('listening on port 4000...');
-  }
-});
-

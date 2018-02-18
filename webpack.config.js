@@ -3,7 +3,6 @@
 import webpack from 'webpack';
 import path from 'path';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import BrowserSyncPlugin from 'browser-sync-webpack-plugin';
 
 const developmentEnvironment = 'development' ;
 const testEnvironment = 'test';
@@ -23,11 +22,6 @@ const getPlugins = function (env, apiUrl) {
     new webpack.LoaderOptionsPlugin({
       debug: true,
       noInfo: true
-    }),
-    new BrowserSyncPlugin({
-      host: 'localhost',
-      port: 4000,
-      reload: true
     })
   ];
 
