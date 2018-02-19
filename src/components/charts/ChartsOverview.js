@@ -28,7 +28,7 @@ export default class ChartsOverview extends Component {
             bitcoinStats={statistics.bitcoin_stats}
             mempool={statistics.transactions.mempool}
             blockSize={statistics.block_size}/>
-          <CurrencyStats/>
+          <CurrencyStats statistics={statistics}/>
         </div>
       );
     }

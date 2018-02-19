@@ -1,7 +1,39 @@
 import React, {Component} from "react";
 import PropTypes from 'prop-types';
+import classnames from 'classnames';
+import './CurrencyStats.scss';
+
+const TAB_OPTIONS = ['Bitcoins in circulation', 'Market Price (USD)', 'Market Capitalization', 'USD Exchange Trade Volume'];
 
 export default class CurrencyStats extends Component {
+
+  constructor() {
+    super();
+
+    this.handleSelectTab = this.handleSelectTab.bind(this);
+    this.state = {
+      activeTab: TAB_OPTIONS[0]
+    };
+  }
+
+  handleSelectTab(event) {
+    this.setState({ activeTab: event.currentTarget.textContent });
+  }
+
+  renderActionTabs(label) {
+    const tabClass = classnames({
+      'tab': true,
+      'mx-auto': true,
+      'nav-item': true,
+      'tab-is-active': this.state.activeTab === label
+    });
+    return (
+      <li className={tabClass} key={label} onClick={this.handleSelectTab}>
+        <span className="option"/>
+        <span className="pl-2">{label}</span>
+      </li>
+    );
+  }
 
   render() {
     return (
@@ -11,6 +43,15 @@ export default class CurrencyStats extends Component {
             Currency statistics
               <i className="icon-down_arrow visible-xs blue pointer"></i>
           </h3>
+
+          <div className="row mb-5">
+            <ul className="nav tabs" role="group">
+              {TAB_OPTIONS.map(tab =>
+                this.renderActionTabs(tab)
+              )}
+            </ul>
+          </div>
+
           <div className="row">
             <div className="col-md-3 col-sm-6 center">
               <a href="/charts/total-bitcoins">
