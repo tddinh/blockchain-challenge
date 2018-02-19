@@ -1,41 +1,60 @@
 import React, {Component} from "react";
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
+import ChartDetails from './details/ChartDetails';
 import './CurrencyStats.scss';
 
-const TAB_OPTIONS = ['Bitcoins in circulation', 'Market Price (USD)', 'Market Capitalization', 'USD Exchange Trade Volume'];
+const TAB_OPTIONS = [
+  {key: 'bitcoins', label:'Bitcoins in circulation'},
+  {key: 'market_prices', label: 'Market Price (USD)'},
+  {key: 'market_cap', label:'Market Capitalization'},
+  {key: 'trade_volume', label: 'Exchange Trade Volume (USD)'}
+];
 
 export default class CurrencyStats extends Component {
 
   constructor() {
     super();
-
-    this.handleSelectTab = this.handleSelectTab.bind(this);
     this.state = {
-      activeTab: TAB_OPTIONS[0]
+      activeTab: TAB_OPTIONS[0].key
     };
   }
 
-  handleSelectTab(event) {
-    this.setState({ activeTab: event.currentTarget.textContent });
+  handleSelectTab(key, event) {
+    event.preventDefault();
+    if (key === 'bitcoins') {
+      this.props.actions.getTotalBitcoins();
+    }
+    else if (key === 'market_prices') {
+      this.props.actions.getMarketPrices();
+    }
+    else if (key === 'market_cap') {
+      this.props.actions.getMarketCap();
+    }
+    else if (key === 'trade_volume') {
+      this.props.actions.getTradeVolume();
+    }
+    this.setState({ activeTab: key });
   }
 
-  renderActionTabs(label) {
+  renderActionTabs(tab) {
     const tabClass = classnames({
       'tab': true,
       'mx-auto': true,
       'nav-item': true,
-      'tab-is-active': this.state.activeTab === label
+      'tab-is-active': this.state.activeTab === tab.key
     });
     return (
-      <li className={tabClass} key={label} onClick={this.handleSelectTab}>
+      <a href="javascript:void(0)" className={tabClass} key={tab.key} onClick={this.handleSelectTab.bind(this, tab.key)}>
         <span className="option"/>
-        <span className="pl-2">{label}</span>
-      </li>
+        <span className="pl-2">{tab.label}</span>
+      </a>
     );
   }
 
   render() {
+    const { statistics } = this.props;
+
     return (
       <div className="bg-grey charts-container" id="currency-statistics">
         <div className="container pv-50 active">
@@ -45,11 +64,16 @@ export default class CurrencyStats extends Component {
           </h3>
 
           <div className="row mb-5">
-            <ul className="nav tabs" role="group">
-              {TAB_OPTIONS.map(tab =>
+            <div className="nav tabs" role="group">
+              {TAB_OPTIONS.map((tab) =>
                 this.renderActionTabs(tab)
               )}
-            </ul>
+            </div>
+          </div>
+
+          <div className="row">
+            <ChartDetails
+              details={statistics[this.state.activeTab]}/>
           </div>
 
           <div className="row">
@@ -97,5 +121,6 @@ export default class CurrencyStats extends Component {
 }
 
 CurrencyStats.propTypes = {
-  statistics: PropTypes.object.isRequired
+  statistics: PropTypes.object.isRequired,
+  actions: PropTypes.object.isRequired
 };

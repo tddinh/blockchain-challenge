@@ -9,10 +9,11 @@ export default class ChartsOverview extends Component {
   render() {
     const {
       statistics,
-      isFetching
+      isFetching,
+      currencyActions
     } = this.props;
 
-    const isLoading = (isFetching || !statistics.bitcoin_stats
+    const isLoading = (isFetching || !statistics.summary
                                   || !statistics.block_size
                                   || !statistics.transactions.mempool);
 
@@ -25,10 +26,14 @@ export default class ChartsOverview extends Component {
       return (
         <div className="charts">
           <PopularStats
-            bitcoinStats={statistics.bitcoin_stats}
+            summary={statistics.summary}
             mempool={statistics.transactions.mempool}
             blockSize={statistics.block_size}/>
-          <CurrencyStats statistics={statistics}/>
+          <CurrencyStats
+            statistics={statistics}
+            actions={currencyActions}
+            onSelectTab={this.props.onSelectTab}
+            />
         </div>
       );
     }
@@ -36,5 +41,7 @@ export default class ChartsOverview extends Component {
 }
 
 ChartsOverview.propTypes = {
-  statistics: PropTypes.object.isRequired
+  statistics: PropTypes.object.isRequired,
+  isFetching: PropTypes.bool.isRequired,
+  currencyActions: PropTypes.object.isRequired
 };

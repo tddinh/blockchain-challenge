@@ -3,29 +3,35 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import ChartsOverview from '../components/charts/ChartsOverview';
 import {
-  fetchBitcoinStats,
+  fetchStatsOverview,
   fetchDailyConfirmedTransactions,
   fetchLatestAverageBlockSize,
-  fetchLatestMempoolSize
+  fetchLatestMempoolSize,
+  fetchTotalBitcoins,
+  fetchMarketPrices,
+  fetchMarketCap,
+  fetchTradeVolume
 } from '../actions/charts';
 
 class ChartsPage extends Component {
 
   componentWillMount() {
-    this.props.getBitcoinStats();
+    this.props.getStatsOverview();
     this.props.getAverageBlockSize();
     // this.props.getConfirmedTransactions();
+    this.props.currencyActions.getTotalBitcoins();
     this.props.getMempoolSize();
   }
 
   render() {
-    const { statistics, isFetching } = this.props;
+    const { statistics, isFetching, currencyActions } = this.props;
 
     return (
       <div id="charts-page">
         <ChartsOverview
           statistics={statistics}
-          isFetching={isFetching}/>
+          isFetching={isFetching}
+          currencyActions={currencyActions}/>
       </div>
     );
   }
@@ -41,8 +47,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getBitcoinStats: () => {
-      dispatch(fetchBitcoinStats());
+    getStatsOverview: () => {
+      dispatch(fetchStatsOverview());
     },
     getAverageBlockSize: () => {
       dispatch(fetchLatestAverageBlockSize());
@@ -52,6 +58,20 @@ const mapDispatchToProps = (dispatch) => {
     },
     getMempoolSize: () => {
       dispatch(fetchLatestMempoolSize());
+    },
+    currencyActions: {
+      getTotalBitcoins: () => {
+        dispatch(fetchTotalBitcoins());
+      },
+      getMarketPrices: () => {
+        dispatch(fetchMarketPrices());
+      },
+      getMarketCap: () => {
+        dispatch(fetchMarketCap());
+      },
+      getTradeVolume: () => {
+        dispatch(fetchTradeVolume());
+      }
     }
   };
 }

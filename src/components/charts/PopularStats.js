@@ -5,12 +5,12 @@ export default class PopularStats extends Component {
 
   render() {
     const {
-      bitcoinStats,
+      summary,
       blockSize,
       mempool
     } = this.props;
 
-    const marketPrice = Math.ceil(bitcoinStats.market_price_usd * 100) / 100;
+    const marketPrice = Math.ceil(summary.market_price_usd * 100) / 100;
 
     return (
       <div id="popular-stats" className="container container-fake">
@@ -35,7 +35,7 @@ export default class PopularStats extends Component {
           <div className="col-md-3 center flex-column popular">
             <span className="mt-10 blue f-20">Transactions per Day</span>
             <a href="javascript:void(0)" className="flex-column center mv-50">
-              <span className="f-48" id="tx-per-day">{formatStats(bitcoinStats.n_tx)}</span>
+              <span className="f-48" id="tx-per-day">{formatStats(summary.n_tx)}</span>
               <span>Transactions</span>
             </a>
             <span className="f-14">The aggregate number of confirmed Bitcoin transactions in the past 24 hours.</span>
@@ -61,7 +61,7 @@ function formatStats(stat) {
 }
 
 PopularStats.propTypes = {
-  bitcoinStats: PropTypes.object.isRequired,
+  summary: PropTypes.object.isRequired,
   blockSize: PropTypes.object.isRequired,
   mempool: PropTypes.object.isRequired
 };

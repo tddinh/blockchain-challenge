@@ -1,31 +1,31 @@
 import { API_ROOT } from '../constants/endpoints.js';
 import "isomorphic-fetch";
 
-export const BITCOIN_STATS_REQUEST = 'BITCOIN_STATS_REQUEST';
-export const BITCOIN_STATS_SUCCESS = 'BITCOIN_STATS_SUCCESS';
-export const BITCOIN_STATS_FAILURE = 'BITCOIN_STATS_FAILURE';
+export const STATISTICS_OVERVIEW_REQUEST = 'STATISTICS_OVERVIEW_REQUEST';
+export const STATISTICS_OVERVIEW_SUCCESS = 'STATISTICS_OVERVIEW_SUCCESS';
+export const STATISTICS_OVERVIEW_FAILURE = 'STATISTICS_OVERVIEW_FAILURE';
 
-function requestBitcoinStats() {
+function requestStatsOverview() {
   return {
-    type: BITCOIN_STATS_REQUEST
+    type: STATISTICS_OVERVIEW_REQUEST
   };
 }
 
-function receiveBitcoinStats(stats) {
+function receiveStatsOverview(stats) {
   return {
-    type: BITCOIN_STATS_SUCCESS,
+    type: STATISTICS_OVERVIEW_SUCCESS,
     stats
   };
 }
 
-function bitcoinStatsError(message) {
+function statsOverviewError(message) {
   return {
-    type: BITCOIN_STATS_FAILURE,
+    type: STATISTICS_OVERVIEW_FAILURE,
     message
   }
 }
 
-export function fetchBitcoinStats() {
+export function fetchStatsOverview() {
   const config = {
     method: 'GET',
     headers: {
@@ -35,15 +35,15 @@ export function fetchBitcoinStats() {
 
   return (dispatch, getState) => {
 
-    dispatch(requestBitcoinStats());
+    dispatch(requestStatsOverview());
     return fetch(`${API_ROOT}/stats?format=json&cors=true`, config)
       .then(response =>
         response.json().then(stats => ({ response, stats }))
       ).then(({response, stats}) => {
-        dispatch(receiveBitcoinStats(stats));
+        dispatch(receiveStatsOverview(stats));
       })
       .catch(err => {
-        dispatch(bitcoinStatsError('Error: ' + err));
+        dispatch(statsOverviewError('Error: ' + err));
       });
   };
 }
@@ -193,7 +193,32 @@ export function fetchLatestMempoolSize() {
   };
 }
 
-export function fetchPendingTransactions() {
+
+export const TOTAL_BITCOINS_REQUEST = 'TOTAL_BITCOINS_REQUEST';
+export const TOTAL_BITCOINS_SUCCESS = 'TOTAL_BITCOINS_SUCCESS';
+export const TOTAL_BITCOINS_FAILURE = 'TOTAL_BITCOINS_FAILURE';
+
+function requestTotalBitcoins() {
+  return {
+    type: TOTAL_BITCOINS_REQUEST
+  };
+}
+
+function receiveTotalBitcoins(stats) {
+  return {
+    type: TOTAL_BITCOINS_SUCCESS,
+    stats
+  };
+}
+
+function totalBitcoinsError(message) {
+  return {
+    type: TOTAL_BITCOINS_FAILURE,
+    message
+  };
+}
+
+export function fetchTotalBitcoins() {
   const config = {
     method: 'GET',
     headers: {
@@ -203,14 +228,155 @@ export function fetchPendingTransactions() {
 
   return (dispatch, getState) => {
 
-    dispatch(requestMempoolSize());
-    return fetch(`${API_ROOT}/charts/mempool-size?cors=true&format=json&lang=en`, config)
+    dispatch(requestTotalBitcoins());
+    return fetch(`${API_ROOT}/charts/total-bitcoins?cors=true&amp;format=json&amp;lang=en`, config)
       .then(response =>
-        response.json().then(mempool => ({ response, mempool }))
-      ).then(({response, mempool}) => {
-        dispatch(receiveMempoolSize(mempool));
+        response.json().then(stats => ({ response, stats }))
+      ).then(({response, stats}) => {
+        dispatch(receiveTotalBitcoins(stats));
       }).catch(err => {
-        dispatch(mempoolSizeError('Error: ' + err));
+        dispatch(totalBitcoinsError('Error: ' + err));
+      });
+  };
+}
+
+
+export const MARKET_PRICES_REQUEST = 'MARKET_PRICES_REQUEST';
+export const MARKET_PRICES_SUCCESS = 'MARKET_PRICES_SUCCESS';
+export const MARKET_PRICES_FAILURE = 'MARKET_PRICES_FAILURE';
+
+function requestMarketPrices() {
+  return {
+    type: MARKET_PRICES_REQUEST
+  };
+}
+
+function receiveMarketPrices(prices) {
+  return {
+    type: MARKET_PRICES_SUCCESS,
+    prices
+  };
+}
+
+function marketPricesError(message) {
+  return {
+    type: MARKET_PRICES_FAILURE,
+    message
+  };
+}
+
+export function fetchMarketPrices() {
+  const config = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json'
+    }
+  };
+
+  return (dispatch, getState) => {
+debugger
+    dispatch(requestMarketPrices());
+    return fetch(`${API_ROOT}/charts/market-price?cors=true&amp;format=json&amp;lang=en`, config)
+      .then(response =>
+        response.json().then(prices => ({ response, prices }))
+      ).then(({response, prices}) => {
+        dispatch(receiveMarketPrices(prices));
+      }).catch(err => {
+        dispatch(marketPricesError('Error: ' + err));
+      });
+  };
+}
+
+
+export const MARKET_CAP_REQUEST = 'MARKET_CAP_REQUEST';
+export const MARKET_CAP_SUCCESS = 'MARKET_CAP_SUCCESS';
+export const MARKET_CAP_FAILURE = 'MARKET_CAP_FAILURE';
+
+function requestMarketCap() {
+  return {
+    type: MARKET_CAP_REQUEST
+  };
+}
+
+function receiveMarketCap(prices) {
+  return {
+    type: MARKET_CAP_SUCCESS,
+    prices
+  };
+}
+
+function marketCapError(message) {
+  return {
+    type: MARKET_CAP_FAILURE,
+    message
+  };
+}
+
+export function fetchMarketCap() {
+  const config = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json'
+    }
+  };
+
+  return (dispatch, getState) => {
+
+    dispatch(requestMarketCap());
+    return fetch(`${API_ROOT}/charts/market-cap?cors=true&amp;format=json&amp;lang=en`, config)
+      .then(response =>
+        response.json().then(stats => ({ response, stats }))
+      ).then(({response, stats}) => {
+        dispatch(receiveMarketCap(stats));
+      }).catch(err => {
+        dispatch(marketCapError('Error: ' + err));
+      });
+  };
+}
+
+
+export const TRADE_VOLUME_REQUEST = 'TRADE_VOLUME_REQUEST';
+export const TRADE_VOLUME_SUCCESS = 'TRADE_VOLUME_SUCCESS';
+export const TRADE_VOLUME_FAILURE = 'TRADE_VOLUME_FAILURE';
+
+function requestTradeVolume() {
+  return {
+    type: TRADE_VOLUME_REQUEST
+  };
+}
+
+function receiveTradeVolume(prices) {
+  return {
+    type: TRADE_VOLUME_SUCCESS,
+    prices
+  };
+}
+
+function tradeVolumeError(message) {
+  return {
+    type: TRADE_VOLUME_FAILURE,
+    message
+  };
+}
+
+export function fetchTradeVolume() {
+  const config = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json'
+    }
+  };
+
+  return (dispatch, getState) => {
+
+    dispatch(requestTradeVolume());
+    return fetch(`${API_ROOT}/charts/trade-volume?cors=true&amp;format=json&amp;lang=en`, config)
+      .then(response =>
+        response.json().then(stats => ({ response, stats }))
+      ).then(({response, stats}) => {
+        dispatch(receiveTradeVolume(stats));
+      }).catch(err => {
+        dispatch(tradeVolumeError('Error: ' + err));
       });
   };
 }

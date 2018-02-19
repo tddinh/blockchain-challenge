@@ -1,7 +1,7 @@
 import {
-  BITCOIN_STATS_REQUEST,
-  BITCOIN_STATS_SUCCESS,
-  BITCOIN_STATS_FAILURE,
+  STATISTICS_OVERVIEW_REQUEST,
+  STATISTICS_OVERVIEW_SUCCESS,
+  STATISTICS_OVERVIEW_FAILURE,
   LATEST_AVERAGE_BLOCK_SIZE_REQUEST,
   LATEST_AVERAGE_BLOCK_SIZE_SUCCESS,
   LATEST_AVERAGE_BLOCK_SIZE_FAILURE,
@@ -10,11 +10,24 @@ import {
   CONFIRMED_TRANSACTIONS_FAILURE,
   MEMPOOL_SIZE_REQUEST,
   MEMPOOL_SIZE_SUCCESS,
-  MEMPOOL_SIZE_FAILURE
+  MEMPOOL_SIZE_FAILURE,
+  TOTAL_BITCOINS_REQUEST,
+  TOTAL_BITCOINS_SUCCESS,
+  TOTAL_BITCOINS_FAILURE,
+  MARKET_PRICES_REQUEST,
+  MARKET_PRICES_SUCCESS,
+  MARKET_PRICES_FAILURE,
+  MARKET_CAP_REQUEST,
+  MARKET_CAP_SUCCESS,
+  MARKET_CAP_FAILURE,
+  TRADE_VOLUME_REQUEST,
+  TRADE_VOLUME_SUCCESS,
+  TRADE_VOLUME_FAILURE
 } from '../actions/charts';
 
+
 export default function(state = {
-  bitcoin_stats: null,
+  summary: null,
   block_size: {
     average: 0
   },
@@ -22,23 +35,27 @@ export default function(state = {
     confirmed_txs: null,
     mempool: null
   },
+  bitcoins: null,
+  market_prices: null,
+  market_cap: null,
+  trade_volume: null,
   isFetching: false,
   errorMessage: ''
 }, action) {
 
   switch(action.type) {
-    case BITCOIN_STATS_REQUEST:
+    case STATISTICS_OVERVIEW_REQUEST:
       return Object.assign({}, state, {
         isFetching: true
       });
 
-    case BITCOIN_STATS_SUCCESS:
+    case STATISTICS_OVERVIEW_SUCCESS:
       return Object.assign({}, state, {
         isFetching: false,
-        bitcoin_stats: action.stats
+        summary: action.stats
       });
 
-    case BITCOIN_STATS_FAILURE:
+    case STATISTICS_OVERVIEW_FAILURE:
       return Object.assign({}, state, {
         errorMessage: action.message,
         isFetching: false
@@ -98,6 +115,74 @@ export default function(state = {
       });
 
     case MEMPOOL_SIZE_FAILURE:
+      return Object.assign({}, state, {
+        isFetching: false,
+        errorMessage: action.message
+      });
+
+    case TOTAL_BITCOINS_REQUEST:
+      return Object.assign({}, state, {
+        isFetching: true
+      });
+
+    case TOTAL_BITCOINS_SUCCESS:
+      return Object.assign({}, state, {
+        isFetching: false,
+        bitcoins: action.stats
+      });
+
+    case TOTAL_BITCOINS_FAILURE:
+      return Object.assign({}, state, {
+        isFetching: false,
+        errorMessage: action.message
+      });
+
+    case MARKET_PRICES_REQUEST:
+      return Object.assign({}, state, {
+        isFetching: true
+      });
+
+    case MARKET_PRICES_SUCCESS:
+      return Object.assign({}, state, {
+        isFetching: false,
+        market_prices: action.prices
+      });
+
+    case MARKET_PRICES_FAILURE:
+      return Object.assign({}, state, {
+        isFetching: false,
+        errorMessage: action.message
+      });
+
+    case MARKET_CAP_REQUEST:
+      return Object.assign({}, state, {
+        isFetching: true
+      });
+
+    case MARKET_CAP_SUCCESS:
+      return Object.assign({}, state, {
+        isFetching: false,
+        market_cap: action.stats
+      });
+
+    case MARKET_CAP_FAILURE:
+      return Object.assign({}, state, {
+        isFetching: false,
+        errorMessage: action.message
+      });
+
+    case TRADE_VOLUME_REQUEST:
+      return Object.assign({}, state, {
+        isFetching: true
+      });
+
+    case TRADE_VOLUME_SUCCESS:
+      return Object.assign({}, state, {
+        isFetching: false,
+        trade_volume: action.stats
+      });
+
+    case TRADE_VOLUME_FAILURE:
       return Object.assign({}, state, {
         isFetching: false,
         errorMessage: action.message
