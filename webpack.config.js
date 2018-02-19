@@ -60,13 +60,14 @@ const getLoaders = function (env) {
 
 function getConfig(env, apiUrl) {
   return {
-    devtool:'cheap-module-eval-source-map',
+    devtool:'cheap-module-source-map',
     entry: getEntry(env),
     target: env === testEnvironment ? 'node' : 'web',
     output: {
       path: __dirname + '/dist',
       publicPath: '/',
-      filename: 'bundle.js'
+      filename: 'bundle.js',
+      crossOriginLoading: 'anonymous'
     },
     devServer: {
       contentBase: './src'
