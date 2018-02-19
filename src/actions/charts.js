@@ -1,25 +1,27 @@
 import { API_ROOT } from '../constants/endpoints.js';
 import "isomorphic-fetch";
 
-export const FETCH_BITCOIN_STATS_REQUEST = 'BITCOIN_STATS_REQUEST';
-export const FETCH_BITCOIN_STATS_SUCCESS = 'BITCOIN_STATS_SUCCESS';
-export const FETCH_BITCOIN_STATS_FAILURE = 'BITCOIN_STATS_FAILURE';
+export const BITCOIN_STATS_REQUEST = 'BITCOIN_STATS_REQUEST';
+export const BITCOIN_STATS_SUCCESS = 'BITCOIN_STATS_SUCCESS';
+export const BITCOIN_STATS_FAILURE = 'BITCOIN_STATS_FAILURE';
 
 function requestBitcoinStats() {
   return {
-    type: FETCH_BITCOIN_STATS_REQUEST
+    type: BITCOIN_STATS_REQUEST
   };
 }
 
-function receiveBitcoinStats() {
+function receiveBitcoinStats(stats) {
   return {
-    type: FETCH_BITCOIN_STATS_SUCCESS
+    type: BITCOIN_STATS_SUCCESS,
+    stats
   };
 }
 
-function bitcoinStatsError() {
+function bitcoinStatsError(message) {
   return {
-    type: FETCH_BITCOIN_STATS_FAILURE
+    type: BITCOIN_STATS_FAILURE,
+    message
   }
 }
 
@@ -32,45 +34,46 @@ export function fetchBitcoinStats() {
   };
 
   return (dispatch, getState) => {
+
+    dispatch(requestBitcoinStats());
     return fetch(`${API_ROOT}/stats?format=json&cors=true`, config)
       .then(response =>
-        response.json().then(data => ({ response, data }))
-      ).then(({response, data}) => {
-        if (!response.ok) {
-          console.log(response);
-        }
-        return data;
+        response.json().then(stats => ({ response, stats }))
+      ).then(({response, stats}) => {
+        dispatch(receiveBitcoinStats(stats));
       })
       .catch(err => {
-        return err;
+        dispatch(bitcoinStatsError('Error: ' + err));
       });
   };
 }
 
 
-export const BLOCK_SIZES_REQUEST = 'BLOCK_SIZES_REQUEST';
-export const BLOCK_SIZES_SUCCESS = 'BLOCK_SIZES_SUCCESS';
-export const BLOCK_SIZES_FAILURE = 'BLOCK_SIZES_FAILURE';
+export const LATEST_AVERAGE_BLOCK_SIZE_REQUEST = 'LATEST_AVERAGE_BLOCK_SIZE_REQUEST';
+export const LATEST_AVERAGE_BLOCK_SIZE_SUCCESS = 'LATEST_AVERAGE_BLOCK_SIZE_SUCCESS';
+export const LATEST_AVERAGE_BLOCK_SIZE_FAILURE = 'LATEST_AVERAGE_BLOCK_SIZE_FAILURE';
 
-function requestBlockSizes() {
+function requestAverageBlockSize() {
   return {
-    type: BLOCK_SIZES_REQUEST
+    type: LATEST_AVERAGE_BLOCK_SIZE_REQUEST
   };
 }
 
-function receiveBlockSizes() {
+function receiveAverageBlockSize(stats) {
   return {
-    type: BLOCK_SIZES_SUCCESS
+    type: LATEST_AVERAGE_BLOCK_SIZE_SUCCESS,
+    stats
   };
 }
 
-function blockSizesError() {
+function averageBlockSizeError(message) {
   return {
-    type: BLOCK_SIZES_FAILURE
+    type: LATEST_AVERAGE_BLOCK_SIZE_FAILURE,
+    message
   };
 }
 
-export function fetchDailyBlockSizes() {
+export function fetchLatestAverageBlockSize() {
   const config = {
     method: 'GET',
     headers: {
@@ -79,15 +82,15 @@ export function fetchDailyBlockSizes() {
   };
 
   return (dispatch, getState) => {
-    return fetch(`${API_ROOT}/charts/avg-block-size?cors=true&format=json&lang=en`, config)
-      .then(response =>
-        response.json().then(transactions => ({ response, transactions }))
-      ).then(({response, transactions}) => {
-        if (!response.ok) {
 
-        }
+    dispatch(requestAverageBlockSize());
+    return fetch(`${API_ROOT}/q/24hravgblocksize?cors=true`, config)
+      .then(response =>
+        response.json().then(avgBlockSize => ({ response, avgBlockSize }))
+      ).then(({response, avgBlockSize}) => {
+        dispatch(receiveAverageBlockSize({ average: avgBlockSize.toFixed(2) }));
       }).catch(err => {
-        console.log('error: ',  err);
+        dispatch(averageBlockSizeError('Error: ' + err));
       });
   };
 }
@@ -103,15 +106,17 @@ function requestConfirmedTransactions() {
   };
 }
 
-function receiveConfirmedTransactions() {
+function receiveConfirmedTransactions(transactions) {
   return {
-    type: CONFIRMED_TRANSACTIONS_SUCCESS
+    type: CONFIRMED_TRANSACTIONS_SUCCESS,
+    transactions
   };
 }
 
-function confirmedTransactionsError() {
+function confirmedTransactionsError(message) {
   return {
-    type: CONFIRMED_TRANSACTIONS_FAILURE
+    type: CONFIRMED_TRANSACTIONS_FAILURE,
+    message
   };
 }
 
@@ -125,43 +130,46 @@ export function fetchDailyConfirmedTransactions() {
   };
 
   return (dispatch, getState) => {
+
+    dispatch(requestConfirmedTransactions())
     return fetch(`${API_ROOT}/charts/n-transactions?cors=true&format=json&lang=en`, config)
       .then(response =>
-        response.json().then(stats => ({ response, stats }))
-      ).then(({response, stats}) => {
-        if (!response.ok) {
-
-        }
+        response.json().then(transactions => ({ response, transactions }))
+      ).then(({response, transactions}) => {
+        dispatch(receiveConfirmedTransactions(transactions));
       }).catch(err => {
-        console.log('error: ', err);
+        dispatch(confirmedTransactionsError('Error: ' + err));
       });
   };
 }
 
 
-export const MEMPOOL_SIZES_REQUEST = 'MEMPOOL_SIZES_REQUEST';
-export const MEMPOOL_SIZES_SUCCESS = 'MEMPOOL_SIZES_SUCCESS';
-export const MEMPOOL_SIZES_FAILURE = 'MEMPOOL_SIZES_FAILURE';
+export const MEMPOOL_SIZE_REQUEST = 'MEMPOOL_SIZE_REQUEST';
+export const MEMPOOL_SIZE_SUCCESS = 'MEMPOOL_SIZE_SUCCESS';
+export const MEMPOOL_SIZE_FAILURE = 'MEMPOOL_SIZE_FAILURE';
 
-function requestMempoolSizes() {
+function requestMempoolSize() {
   return {
-    type: MEMPOOL_SIZES_REQUEST
+    type: MEMPOOL_SIZE_REQUEST
   };
 }
 
-function receiveMempoolSizes() {
+function receiveMempoolSize(mempool, mempoolSize) {
   return {
-    type: MEMPOOL_SIZES_SUCCESS
+    type: MEMPOOL_SIZE_SUCCESS,
+    mempool,
+    mempoolSize
   };
 }
 
-function mempoolSizesError() {
+function mempoolSizeError(message) {
   return {
-    type: MEMPOOL_SIZES_FAILURE
+    type: MEMPOOL_SIZE_FAILURE,
+    message
   };
 }
 
-export function fetchDailyPendingTransactions() {
+export function fetchLatestMempoolSize() {
   const config = {
     method: 'GET',
     headers: {
@@ -170,16 +178,39 @@ export function fetchDailyPendingTransactions() {
   };
 
   return (dispatch, getState) => {
+
+    dispatch(requestMempoolSize());
+    return fetch(`${API_ROOT}/charts/mempool-size?timespan=1days&format=json&cors=true`, config)
+      .then(response =>
+        response.json().then(mempool => ({ response, mempool }))
+      ).then(({response, mempool}) => {
+        const { values } = mempool;
+        const mempoolSize = Math.round(values[values.length-1].y);
+        dispatch(receiveMempoolSize(mempool, mempoolSize));
+      }).catch(err => {
+        dispatch(mempoolSizeError('Error: ' + err));
+      });
+  };
+}
+
+export function fetchPendingTransactions() {
+  const config = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json'
+    }
+  };
+
+  return (dispatch, getState) => {
+
+    dispatch(requestMempoolSize());
     return fetch(`${API_ROOT}/charts/mempool-size?cors=true&format=json&lang=en`, config)
       .then(response =>
-        response.json().then(stats => ({ response, stats }))
-      ).then(({response, stats}) => {
-        if (!response.ok) {
-
-        }
-
+        response.json().then(mempool => ({ response, mempool }))
+      ).then(({response, mempool}) => {
+        dispatch(receiveMempoolSize(mempool));
       }).catch(err => {
-        console.log('error: ', err);
+        dispatch(mempoolSizeError('Error: ' + err));
       });
   };
 }
