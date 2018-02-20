@@ -18,10 +18,10 @@ export default class ChartDetails extends Component {
   componentWillReceiveProps(nextProps) {
     if (nextProps.details && !this.props.details) {
       this.initializeChart(nextProps.details, nextProps.activeKey);
-      this.renderSelectedChart(nextProps.activeKey);
+      this.toogleActiveChart(nextProps.activeKey);
     }
     else if (nextProps.activeKey !== this.state.active) {
-      this.renderSelectedChart(nextProps.activeKey);
+      this.toogleActiveChart(nextProps.activeKey);
     }
   }
 
@@ -36,7 +36,7 @@ export default class ChartDetails extends Component {
     });
 
     const ctx = document.getElementById(key);
-    const myChart = new Chart(ctx, {
+    const chart = new Chart(ctx, {
         type: 'line',
         data: {
           labels: chartData.map(stat => stat.x),
@@ -45,38 +45,36 @@ export default class ChartDetails extends Component {
             pointRadius: 0.5,
             borderWidth: 1,
             data: chartData,
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
+            backgroundColor: 'rgba(63, 127, 191, 0.2)',
+            borderColor: 'rgba(63, 127, 191, 1)',
           }]
         },
         options: {
             responsive: true,
+            hover: {
+              mode: 'label'
+            },
+            tooltips: {
+              mode: 'label',
+              intersect: false
+            },
             scales: {
                 xAxes: [{
+                  display: true,
                   type: 'time',
+                  scaleLabel: {
+                    show: true
+                  },
                   time: {
-                    unit: 'day',
-                    displayFormats: {
-                      day: 'YYYY-MM-DD',
-                      hour: 'HH:mm:ss'
-                    }
+                    unit: 'day'
+                  },
+                  ticks: {
+                    autoSkip: true,
+                    maxTicksLimit: 13,
                   }
                 }],
                 yAxes: [{
+                    display: true,
                     ticks: {
                         beginAtZero:true
                     }
@@ -88,7 +86,7 @@ export default class ChartDetails extends Component {
     this.setState({ active: key });
   }
 
-  renderSelectedChart(key) {
+  toogleActiveChart(key) {
     const chart = document.getElementById(this.state.active);
     const nextChart = document.getElementById(key);
     chart.classList.add('hidden');
