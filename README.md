@@ -11,14 +11,6 @@ npm install webpack -g
 
 Install packages with `npm install`
 
-Fire up `webpack` in a separate terminal window, to allow it to continuously build:
-```
-webpack --config webpack/webpack.config.js --watch --colors
-```
+Run dev server with `npm start`
 
-Run node server in a separate terminal window
-```
-npm start
-```
-
-View in browser: locaslhost:4000# Redux-Webpack-Starter
+View in browser: locaslhost:8000
