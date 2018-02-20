@@ -6,6 +6,10 @@ import Spinner from '../utilities/spinner/Spinner';
 
 export default class ChartsOverview extends Component {
 
+  componentDidMount() {
+    window.scrollTo(0, 0);
+  }
+
   render() {
     const {
       statistics,
@@ -13,9 +17,9 @@ export default class ChartsOverview extends Component {
       currencyActions
     } = this.props;
 
-    const isLoading = (isFetching || !statistics.summary
-                                  || !statistics.block_size
-                                  || !statistics.transactions.mempool);
+    const isLoading = (!statistics.summary
+                          || !statistics.block_size
+                          || !statistics.transactions.mempool);
 
     if (isLoading) {
       return (
@@ -31,9 +35,7 @@ export default class ChartsOverview extends Component {
             blockSize={statistics.block_size}/>
           <CurrencyStats
             statistics={statistics}
-            actions={currencyActions}
-            onSelectTab={this.props.onSelectTab}
-            />
+            actions={currencyActions}/>
         </div>
       );
     }

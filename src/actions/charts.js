@@ -22,7 +22,7 @@ function statsOverviewError(message) {
   return {
     type: STATISTICS_OVERVIEW_FAILURE,
     message
-  }
+  };
 }
 
 export function fetchStatsOverview() {
@@ -131,7 +131,7 @@ export function fetchDailyConfirmedTransactions() {
 
   return (dispatch, getState) => {
 
-    dispatch(requestConfirmedTransactions())
+    dispatch(requestConfirmedTransactions());
     return fetch(`${API_ROOT}/charts/n-transactions?cors=true&format=json&lang=en`, config)
       .then(response =>
         response.json().then(transactions => ({ response, transactions }))
@@ -274,7 +274,7 @@ export function fetchMarketPrices() {
   };
 
   return (dispatch, getState) => {
-debugger
+
     dispatch(requestMarketPrices());
     return fetch(`${API_ROOT}/charts/market-price?cors=true&amp;format=json&amp;lang=en`, config)
       .then(response =>
@@ -298,10 +298,10 @@ function requestMarketCap() {
   };
 }
 
-function receiveMarketCap(prices) {
+function receiveMarketCap(stats) {
   return {
     type: MARKET_CAP_SUCCESS,
-    prices
+    stats
   };
 }
 
@@ -345,10 +345,10 @@ function requestTradeVolume() {
   };
 }
 
-function receiveTradeVolume(prices) {
+function receiveTradeVolume(trades) {
   return {
     type: TRADE_VOLUME_SUCCESS,
-    prices
+    trades
   };
 }
 
@@ -372,9 +372,9 @@ export function fetchTradeVolume() {
     dispatch(requestTradeVolume());
     return fetch(`${API_ROOT}/charts/trade-volume?cors=true&amp;format=json&amp;lang=en`, config)
       .then(response =>
-        response.json().then(stats => ({ response, stats }))
-      ).then(({response, stats}) => {
-        dispatch(receiveTradeVolume(stats));
+        response.json().then(trades => ({ response, trades }))
+      ).then(({response, trades}) => {
+        dispatch(receiveTradeVolume(trades));
       }).catch(err => {
         dispatch(tradeVolumeError('Error: ' + err));
       });

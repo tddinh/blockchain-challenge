@@ -1,121 +1,81 @@
 import React, {Component} from "react";
 import PropTypes from 'prop-types';
+import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import moment from 'moment';
 import Chart from 'chart.js';
-import { Line as LineChart  } from 'react-chartjs';
 import './ChartDetails.scss';
+import _ from 'lodash';
 
 export default class ChartDetails extends Component {
-
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      filter: ''
+      active: props.activeKey
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.details && !this.props.details) {
+      this.initializeChart(nextProps.details, nextProps.activeKey);
+      this.renderSelectedChart(nextProps.activeKey);
+    }
+    else if (nextProps.activeKey !== this.state.active) {
+      this.renderSelectedChart(nextProps.activeKey);
     }
   }
 
-  componentDidMount() {debugger
-    this.renderChartData(this.props.details);
-    this.renderChartDataExample();
-  }
-
-  renderChartData(data) {
+  initializeChart(data, key) {
     if (!data) return;
-    debugger;
-    window.moment = moment;
-    const checkpoint = Math.round(data.values.length / 12);
-    const markCheckpoints = [];
 
-    const mapTime = data.values.map((stat, i) => {
-      const formattedTime = moment.unix(stat.x).format("YYYY-MM-DD HH:mm:ss");
-      if (i % checkpoint === 0) markCheckpoints.push(formattedTime);
+    const chartData = data.values.map((stat, i) => {
       return {
-        x: formattedTime,
+        x: moment.unix(stat.x).format("YYYY-MM-DD HH:mm:ss"),
         y: stat.y
-      }
+      };
     });
 
-    const ctx = document.getElementById("myChart");
-    const myChart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: markCheckpoints,
-        datasets: [{
-          label: data.name,
-          pointRadius: 0.3,
-          borderWidth: 1,
-          data: mapTime,
-          backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(255, 206, 86, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
-              'rgba(153, 102, 255, 0.2)',
-              'rgba(255, 159, 64, 0.2)'
-          ],
-          borderColor: [
-              'rgba(255,99,132,1)',
-              'rgba(54, 162, 235, 1)',
-              'rgba(255, 206, 86, 1)',
-              'rgba(75, 192, 192, 1)',
-              'rgba(153, 102, 255, 1)',
-              'rgba(255, 159, 64, 1)'
-          ],
-        }]
-      },
-      options: {
-          responsive: true,
-          scales: {
-              xAxes: [{
-                type: 'time',
-                time: {
-                  unit: 'minute',
-                  displayFormats: {
-                    hour: 'HH:mm:ss'
-                  }
-                }
-              }],
-              yAxes: [{
-                  ticks: {
-                      beginAtZero:true
-                  }
-              }]
-          }
-      }
-    });
-  }
-
-  renderChartDataExample() {
-    const ctx = document.getElementById("myChartExample");
+    const ctx = document.getElementById(key);
     const myChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
+          labels: chartData.map(stat => stat.x),
+          datasets: [{
+            label: data.name,
+            pointRadius: 0.5,
+            borderWidth: 1,
+            data: chartData,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+          }]
         },
         options: {
+            responsive: true,
             scales: {
+                xAxes: [{
+                  type: 'time',
+                  time: {
+                    unit: 'day',
+                    displayFormats: {
+                      day: 'YYYY-MM-DD',
+                      hour: 'HH:mm:ss'
+                    }
+                  }
+                }],
                 yAxes: [{
                     ticks: {
                         beginAtZero:true
@@ -124,19 +84,34 @@ export default class ChartDetails extends Component {
             }
         }
     });
+
+    this.setState({ active: key });
+  }
+
+  renderSelectedChart(key) {
+    const chart = document.getElementById(this.state.active);
+    const nextChart = document.getElementById(key);
+    chart.classList.add('hidden');
+    nextChart.classList.remove('hidden');
+    this.setState({ active: key });
   }
 
   render() {
+    const { details } = this.props;
 
     return (
       <div className="bg-grey charts-container" id="chart-details">
-        <canvas id="myChart" ref="myChart" width="1170" height="568"></canvas>
-        <canvas id="myChartExample" ref="myChartExample" width="400" height="400"></canvas>
+        <canvas id="bitcoins" className="" width="1170" height="580"></canvas>
+        <canvas id="market_prices" className="hidden" width="1170" height="580"></canvas>
+        <canvas id="market_cap" className="hidden" width="1170" height="580"></canvas>
+        <canvas id="trade_volume" className="hidden" width="1170" height="580"></canvas>
       </div>
     );
   }
+
 }
 
 ChartDetails.propTypes = {
-  details: PropTypes.object.isRequired
+  details: PropTypes.object,
+  activeKey: PropTypes.string.isRequired
 };

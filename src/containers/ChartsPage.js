@@ -19,7 +19,6 @@ class ChartsPage extends Component {
     this.props.getStatsOverview();
     this.props.getAverageBlockSize();
     // this.props.getConfirmedTransactions();
-    this.props.currencyActions.getTotalBitcoins();
     this.props.getMempoolSize();
   }
 
@@ -37,13 +36,23 @@ class ChartsPage extends Component {
   }
 }
 
+ChartsPage.propTypes = {
+  statistics: PropTypes.object.isRequired,
+  isFetching: PropTypes.bool.isRequired,
+  currencyActions: PropTypes.object.isRequired,
+  getStatsOverview: PropTypes.func.isRequired,
+  getAverageBlockSize: PropTypes.func.isRequired,
+  getConfirmedTransactions: PropTypes.func.isRequired,
+  getMempoolSize: PropTypes.func.isRequired
+};
+
 const mapStateToProps = (state) => {
   return {
     statistics: state.charts,
     isFetching: state.charts.isFetching,
     errorMessage: state.charts.errorMessage
   };
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -74,7 +83,7 @@ const mapDispatchToProps = (dispatch) => {
       }
     }
   };
-}
+};
 
 export default connect(
   mapStateToProps,

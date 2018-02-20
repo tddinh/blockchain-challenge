@@ -179,7 +179,7 @@ export default function(state = {
     case TRADE_VOLUME_SUCCESS:
       return Object.assign({}, state, {
         isFetching: false,
-        trade_volume: action.stats
+        trade_volume: action.trades
       });
 
     case TRADE_VOLUME_FAILURE:
